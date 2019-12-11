@@ -100,6 +100,6 @@ exports.build = series(parallel(cssTask, jsTask, imgTask), htmlTask);
 exports.default = series(parallel(cssTask, jsTask), cacheBustTask, watchTask);
 
 function deployTask() {
-  return gulp.src("./dist/**/*").pipe(ghPages());
+  return src("./dist/**/*").pipe(ghPages());
 }
 exports.deploy = series(deployTask);
