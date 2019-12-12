@@ -21,8 +21,8 @@ var htmlmin = require("gulp-htmlmin");
 var replace = require("gulp-replace");
 // 浏览器同步
 var browserSync = require("browser-sync").create();
-// Git-pages同步
-var ghPages = require("gulp-gh-pages");
+// git上传
+var deploy = require("gulp-gh-pages");
 
 // File paths
 const files = {
@@ -52,17 +52,7 @@ function cssTask() {
 // 图片压缩
 function imgTask() {
   return src(files.imgPath)
-    .pipe(
-      imagemin(
-        [
-          imagemin.gifsicle({ interlaced: true }),
-          imagemin.jpegtran({ progressive: true }),
-          imagemin.optipng(),
-          imagemin.svgo()
-        ],
-        { verbose: false } //是否要输出详细信息
-      )
-    )
+    .pipe(imagemin())
     .pipe(dest("dist/img"));
 }
 
@@ -98,8 +88,9 @@ function watchTask() {
 
 exports.build = series(parallel(cssTask, jsTask, imgTask), htmlTask);
 exports.default = series(parallel(cssTask, jsTask), cacheBustTask, watchTask);
-
-function deployTask() {
-  return src("./dist/**/*").pipe(ghPages());
+/**
+ * Push build to gh-pages
+ */
+function deploy() {
+  return src("./dist/**/*").pipe(deploy());
 }
-exports.deploy = series(deployTask);
